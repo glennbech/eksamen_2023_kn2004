@@ -1,4 +1,4 @@
-name: SAM Application Workflow
+name: Kjells python code SAM Application Workflow
 on: 
   push:
     branches:
