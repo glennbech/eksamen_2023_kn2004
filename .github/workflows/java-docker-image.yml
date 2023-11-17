@@ -17,7 +17,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: /Dockerfile
+        file: ./Dockerfile
         tags: kn2004-ppe:${{ github.sha }}
         outputs: type=docker, dest=/tmp/image.tar
 
