@@ -12,9 +12,11 @@ jobs:
       run: docker build . --file Dockerfile --tag kn2004-ppe:$(git rev-parse --short "$GITHUB_SHA")
 
   push_to_registry:
+    needs: build
     if: github.ref =='refs/heads/main'
     name: Push Docker image to ECR
     runs-on: ubuntu-latest
+    
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
