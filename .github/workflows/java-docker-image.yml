@@ -18,7 +18,7 @@ jobs:
       with:
         context: .
         file: -/Dockerfile
-        tags: kn2004-ppe:${{git rev-parse --short "$GITHUB_SHA"}}
+        tags: kn2004-ppe:${{ github.sha }}
         outputs: type=docker, dest=/tmp/image.tar
 
     - name: Upload artifact
