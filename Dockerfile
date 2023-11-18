@@ -1,9 +1,9 @@
 # Build / install application
-FROM maven:3.6-jdk-11 as builder
+FROM maven:3.8.6-openjdk-11-slim as builder
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn install
+RUN mvn package
 
 # Start application
 FROM adoptopenjdk/openjdk11:alpine-slim
