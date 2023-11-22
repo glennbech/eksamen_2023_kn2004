@@ -28,7 +28,7 @@ jobs:
         name: image
         path: /tmp/image.tar
 
-  push_to_registry:
+  push_to_ecr:
     needs: build
     if: github.ref =='refs/heads/main'
     name: Push Docker image to ECR
@@ -64,3 +64,36 @@ jobs:
           docker tag ${{ vars.ECR_REPO }} ${{ vars.ECR_REPO }}:latest
           
           docker push ${{ vars.ECR_REPO }}
+
+  terraform:
+    name: "Terraform"
+    needs: push_to_ecr
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: eu-west-1
+      IMAGE: ${{vars.ECR_REPO}}:latest
+      PREFIX: kn2004
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v3
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Init
+        run: terraform init
+
+      - name: plan
+        id: Plan
+        run: terraform plan   -var="prefix=$PREFIX" -var="image=$IMAGE"  -no-color
+        continue-on-error: true
+
+      - name: Plan status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -var="prefix=$PREFIX" -var="image=$IMAGE" -auto-approve
