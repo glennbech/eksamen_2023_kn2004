@@ -87,7 +87,7 @@ jobs:
 
       - name: plan
         id: Plan
-        run: terraform plan   -var="prefix=$PREFIX" -var="image=$IMAGE"  -no-color
+        run: terraform plan -var="prefix=$PREFIX" -var="img=$IMAGE" -no-color
         continue-on-error: true
 
       - name: Plan status
@@ -96,4 +96,4 @@ jobs:
 
       - name: apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -var="prefix=$PREFIX" -var="image=$IMAGE" -auto-approve
+        run: terraform apply -var="prefix=$PREFIX" -var="img=$IMAGE" -auto-approve
