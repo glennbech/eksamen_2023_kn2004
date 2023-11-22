@@ -4,6 +4,7 @@ on: push
 jobs:
 
   build:
+    name: Build docker image
     runs-on: ubuntu-latest
 
     steps:
@@ -69,12 +70,18 @@ jobs:
     name: "Terraform"
     needs: push_to_ecr
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra
+    
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: eu-west-1
       IMAGE: ${{vars.ECR_REPO}}:latest
-      PREFIX: kn2004
+      PREFIX: kn2004      
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -94,6 +101,6 @@ jobs:
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
-      - name: apply
+      - name: Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -var="prefix=$PREFIX" -var="img=$IMAGE" -auto-approve
