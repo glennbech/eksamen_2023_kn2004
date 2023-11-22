@@ -60,7 +60,7 @@ jobs:
           aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 244530008913.dkr.ecr.eu-west-1.amazonaws.com
           rev=$(git rev-parse --short HEAD)
           
-          docker tag kn2004-ppe:${{ github.sha }} 244530008913.dkr.ecr.eu-west-1.amazonaws.com/2004-ecr-repo
-          docker tag 244530008913.dkr.ecr.eu-west-1.amazonaws.com/2004-ecr-repo kn2004-ppe:latest
+          docker tag kn2004-ppe:${{ github.sha }} ${{ vars.ECR_REPO }}
+          docker tag ${{ vars.ECR_REPO }} ${{ vars.ECR_REPO }}:latest
           
-          docker push 244530008913.dkr.ecr.eu-west-1.amazonaws.com/2004-ecr-repo
+          docker push ${{ vars.ECR_REPO }}
