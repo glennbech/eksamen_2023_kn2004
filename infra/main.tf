@@ -1,3 +1,16 @@
+terraform {
+  backend "s3" {
+    bucket         = "pgr301-2021-terraform-state"
+    key            = "kn2004/state/apprunner.state"
+    region         = "eu-west-1"
+    encrypt        = true
+  }
+}
+
+provider "aws" {
+  region = "eu-west-1"
+}
+
 resource "aws_apprunner_service" "service" {
   service_name = var.prefix
 
