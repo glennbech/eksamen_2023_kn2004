@@ -1,13 +1,12 @@
 terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "4.39.0"
-    }
-  }
   backend "s3" {
-    bucket = "pgr301-2021-terraform-state"
-    key    = "kn2004/apprunner.state"
-    region = "eu-north-1"
+    bucket         = "kn2004-terraform-state"
+    key            = "kan2004/state/apprunner.state"
+    region         = "eu-west-1"
+    encrypt        = true
   }
+}
+
+provider "aws" {
+  region = "eu-west-1"
 }

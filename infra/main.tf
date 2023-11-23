@@ -25,7 +25,7 @@ resource "aws_apprunner_service" "service" {
 }
 
 resource "aws_iam_role" "role_for_apprunner_service" {
-  name               = "rekognition-s3-cloudwatch-role"
+  name               = "kn2004-apprunner-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -64,7 +64,7 @@ data "aws_iam_policy_document" "policy" {
 }
 
 resource "aws_iam_policy" "policy" {
-  name        = "Allow-rekognition-s3-cloudwatch"
+  name        = "kn2004-apprunner-policy"
   description = "Allows the usage of everything under rekognition, s3, and cloudwatch"
   policy      = data.aws_iam_policy_document.policy.json
 }
