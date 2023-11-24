@@ -4,8 +4,8 @@
 ### AWS (environment secrets)
 - AWS_ACCESS_KEY_ID 
 - AWS_SECRET_ACCESS_KEY
-Begge disse to får man ved å gå inn i "IAM" -> "My security credentials" -> under "Access Keys" trykk "create new access key" -> velg "Other" -> lag en description -> ta vare på keysene som blir vist, det burde være mulig å laste de ned.
-Kan også bruke denne linken for å komme seg til Key Wizard: https://us-east-1.console.aws.amazon.com/iam/home?region=eu-north-1#/security_credentials/access-key-wizard
+* Begge disse to får man ved å gå inn i "IAM" -> "My security credentials" -> under "Access Keys" trykk "create new access key" -> velg "Other" -> lag en description -> ta vare på keysene som blir vist, det burde være mulig å laste de ned.
+* Kan også bruke denne linken for å komme seg til Key Wizard: https://us-east-1.console.aws.amazon.com/iam/home?region=eu-north-1#/security_credentials/access-key-wizard
 
 ### Kjell's python kode (environment variables)
 - DEPLOY_BUCKET_NAME = Dette er hvilken Bucket SAM skal deploye til (f.eks "candidate2004")
