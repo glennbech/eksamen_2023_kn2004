@@ -1,5 +1,20 @@
 # Eksamen PGR301 2023
 
+## Secrets og Variables som trengs for at Github Actions skal kjøre som forventet.
+### AWS (environment secrets)
+- AWS_ACCESS_KEY_ID 
+- AWS_SECRET_ACCESS_KEY
+Begge disse to får man ved å gå inn i "IAM" -> "My security credentials" -> under "Access Keys" trykk "create new access key" -> velg "Other" -> lag en description -> ta vare på keysene som blir vist, det burde være mulig å laste de ned.
+Kan også bruke denne linken for å komme seg til Key Wizard: https://us-east-1.console.aws.amazon.com/iam/home?region=eu-north-1#/security_credentials/access-key-wizard
+
+### Kjell's python kode (environment variables)
+- DEPLOY_BUCKET_NAME = Dette er hvilken Bucket SAM skal deploye til (f.eks "candidate2004")
+- DEPLOY_STACK_NAME  = Hva stacken SAM lager skal kalles (f.eks "candidate2004")
+- IMAGE_BUCKET_NAME  = Navnet til bucketen med bildene som skal analyseres (f.eks "kjellsimagebucket" eller "candidate2004-image-bucket")
+
+### Terraform / Java (environment variables)
+-  ECR_REPO          = Linken til ECR repo der Docker Imagen skal bli lastet opp (f.eks "244530008913.dkr.ecr.eu-west-1.amazonaws.com/2004-ecr-repo")
+
 ## Checklist:
 ### Oppgave 1 - Kjell's python code
 
@@ -8,7 +23,7 @@
 - [x]  Du skal opprette en GitHub Actions-arbeidsflyt for SAM applikasjonen. For hver push til main branch, skal
   arbeidsflyten bygge og deploye Lambda-funksjonen.
 - [x] Som respons på en push til en annen branch en main, skal applikasjonen kun bygges.
-- [ ] Sensor vil lage en fork av ditt repository. Forklar hva sensor må gjøre for å få GitHub Actions workflow til å kjøre i
+- [x] Sensor vil lage en fork av ditt repository. Forklar hva sensor må gjøre for å få GitHub Actions workflow til å kjøre i
   sin egen GitHub-konto.
 
 #### B. Docker container
@@ -24,22 +39,22 @@ docker run -e AWS_ACCESS_KEY_ID=XXX -e AWS_SECRET_ACCESS_KEY=YYY -e BUCKET_NAME=
 ### Oppgave 2. Overgang til Java og Spring boot
 
 #### A. Dockerfile
-- [ ] Test java-applikasjonen lokalt i ditt cloud9 miljø ved å stå i rotmappen til ditt repository, og kjøre kommandoen mvn spring-boot:run
-- [ ] Du kan teste applikasjonen i en terminal med curl localhost:8080/scan-ppe?bucketName=<din bucket> og se på responsen.
-- [ ] Lag en Dockerfile for Java-appliksjonen. Du skal lage en multi stage Dockerfile som både kompilerer og kjører applikasjonen.
-- [ ] Sensor vil lage en fork av ditt repository, og skal kunne kjøre følgende kommandoer for å starte en docker container
+- [x] Test java-applikasjonen lokalt i ditt cloud9 miljø ved å stå i rotmappen til ditt repository, og kjøre kommandoen mvn spring-boot:run
+- [x] Du kan teste applikasjonen i en terminal med curl localhost:8080/scan-ppe?bucketName=<din bucket> og se på responsen.
+- [x] Lag en Dockerfile for Java-appliksjonen. Du skal lage en multi stage Dockerfile som både kompilerer og kjører applikasjonen.
+- [x] Sensor vil lage en fork av ditt repository, og skal kunne kjøre følgende kommandoer for å starte en docker container
 ```shell
 docker build -t ppe . 
 docker run -p 8080:8080 -e AWS_ACCESS_KEY_ID=XXX -e AWS_SECRET_ACCESS_KEY=YYY -e BUCKET_NAME=kjellsimagebucket ppe
 ```
 
 #### B. GitHub Actions workflow for container image og ECR
-- [ ] Du skal nå automatisere prosessen med å bygge/kompilere og teste Java-applikasjonen. Lag en ny GitHub Actions Workflow fil, ikke gjenbruk den du lagde for Pythonkoden.
-- [ ] Lag en GitHub actions workflow som ved hver push til main branch lager og publiserer et nytt Container image til et ECR repository.
-- [ ] Workflow skal kompilere og bygge et nytt container image, men ikke publisere image til ECR dersom branch er noe annet en main.
-- [ ] Du må selv lage et ECR repository i AWS miljøet, du trenger ikke automatisere prosessen med å lage dette.
-- [ ] Container image skal ha en tag som er lik commit-hash i Git, for eksempel: glenn-ppe:b2572585e.
-- [ ] Den siste versjonen av container image som blir pushet til ECR, skal i tillegg få en tag "latest".
+- [x] Du skal nå automatisere prosessen med å bygge/kompilere og teste Java-applikasjonen. Lag en ny GitHub Actions Workflow fil, ikke gjenbruk den du lagde for Pythonkoden.
+- [x] Lag en GitHub actions workflow som ved hver push til main branch lager og publiserer et nytt Container image til et ECR repository.
+- [x] Workflow skal kompilere og bygge et nytt container image, men ikke publisere image til ECR dersom branch er noe annet en main.
+- [x] Du må selv lage et ECR repository i AWS miljøet, du trenger ikke automatisere prosessen med å lage dette.
+- [x] Container image skal ha en tag som er lik commit-hash i Git, for eksempel: glenn-ppe:b2572585e.
+- [x] Den siste versjonen av container image som blir pushet til ECR, skal i tillegg få en tag "latest".
 
 ### Oppgave 3 - Terraform, AWS Apprunner og Infrastruktur som kode
 Se på koden som ligger i infra katalogen, den inneholder kun en app_runner_service og en IAM roller som gjør denne i stand til å gjøre API kall mot AWS Rekognition og lese fra S3.
