@@ -32,17 +32,15 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
 
     private static final Logger logger = Logger.getLogger(RekognitionController.class.getName());
 
-    public RekognitionController() {
+    private MeterRegistry meterRegistry;
+    
+    @Autowired
+    public RekognitionController(MeterRegistry meterRegistry) {
         this.s3Client = AmazonS3ClientBuilder.standard().build();
         this.rekognitionClient = AmazonRekognitionClientBuilder.standard().build();
-    }
-    
-    private MeterRegistry meterRegistry;
-
-    @Autowired
-    public BankAccountController(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }
+    
 
     /**
      * This endpoint takes an S3 bucket name in as an argument, scans all the
