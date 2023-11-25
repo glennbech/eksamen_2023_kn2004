@@ -34,6 +34,8 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
 
     private MeterRegistry meterRegistry;
     
+    private int numViolations = 0;
+    
     @Autowired
     public RekognitionController(MeterRegistry meterRegistry) {
         this.s3Client = AmazonS3ClientBuilder.standard().build();
@@ -83,6 +85,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             
             if(violation) {
                 meterRegistry.counter("total_violations").increment();
+                numViolations++;
             }
 
             logger.info("scanning " + image.getKey() + ", violation result " + violation);
@@ -114,6 +117,8 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
+        
+        Gauge.builder("total_violations", numViolations, b -> b.values).register(meterRegistry);
 
     }
 }
