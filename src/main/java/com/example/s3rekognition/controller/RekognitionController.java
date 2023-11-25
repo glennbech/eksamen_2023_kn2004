@@ -83,7 +83,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             boolean violation = isViolation(result);
             
             if(violation) {
-                Counter counter = meterRegistry.counter("total_violations.counter");
+                Counter counter = meterRegistry.counter("total_violations");
                 counter.increment();
             }
 

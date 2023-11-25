@@ -1,6 +1,6 @@
 variable "prefix" {
     description = "The name of the aws apprunner service."
-    default = "kn2004-apprunner-service"
+    default = "kn2004"
 }
 
 variable "img" {
