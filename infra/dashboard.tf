@@ -13,7 +13,7 @@ resource "aws_cloudwatch_dashboard" "main" {
         "metrics": [
           [
             "${var.prefix}",
-            "total_violations.value"
+            "total_violations.counter"
           ]
         ],
         "period": 300,

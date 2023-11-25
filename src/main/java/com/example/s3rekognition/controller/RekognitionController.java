@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.micrometer.core.annotation.Timed;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +83,8 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             boolean violation = isViolation(result);
             
             if(violation) {
-                numViolations++;
+                Counter counter = meterRegistry.counter("total_violations.counter");
+                counter.increment();
             }
 
             logger.info("scanning " + image.getKey() + ", violation result " + violation);
@@ -112,12 +112,20 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                 .anyMatch(bodyPart -> bodyPart.getName().equals("FACE")
                         && bodyPart.getEquipmentDetections().isEmpty());
     }
+    
+    @GetMapping (value = "testmetrics")
+    public ResponseEntity<String> testMetrics (){
+        Counter counter = meterRegistry.counter("test.counter");
+        counter.increment();
+        
+        return ResponseEntity.ok("Test counter incremented.");
+        
+    }
 
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
         
-        Gauge.builder("total_violations", numViolations, b -> b).register(meterRegistry);
 
     }
 }
