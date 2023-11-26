@@ -80,17 +80,33 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             DetectProtectiveEquipmentResult result = rekognitionClient.detectProtectiveEquipment(request);
 
             // If any person on an image lacks PPE on the face, it's a violation of regulations
-            boolean violation = isViolation(result);
+            int faceViolations = faceViolations(result);
             
-            if(violation) {
-                Counter counter = meterRegistry.counter("total_violations");
-                counter.increment();
+            boolean violation = false;
+            
+            
+            if(0 < faceViolations) {
+                violation = true;
+                
+                Counter faceViolationsCounter = meterRegistry.counter("facial_violations");
+                faceViolationsCounter.increment((double) faceViolations);
+                
+                Counter totalViolationsCounter = meterRegistry.counter("total_violations");
+                totalViolationsCounter.increment((double) faceViolations);
+                
             }
 
-            logger.info("scanning " + image.getKey() + ", violation result " + violation);
+            logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total facial violations " + faceViolations);
             // Categorize the current image as a violation or not.
             int personCount = result.getPersons().size();
-            PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation);
+           
+           if(0 < personCount){
+                Counter counter = meterRegistry.counter("people_scanned");
+                for (int i = 0; i < personCount; i++) counter.increment();
+           } 
+            
+            PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations);
+            
             classificationResponses.add(classification);
         }
         PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
@@ -106,11 +122,12 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
      * @param result
      * @return
      */
-    private static boolean isViolation(DetectProtectiveEquipmentResult result) {
-        return result.getPersons().stream()
+    private int faceViolations(DetectProtectiveEquipmentResult result) {
+        return (int) result.getPersons().stream()
                 .flatMap(p -> p.getBodyParts().stream())
-                .anyMatch(bodyPart -> bodyPart.getName().equals("FACE")
-                        && bodyPart.getEquipmentDetections().isEmpty());
+                .filter(bodyPart -> bodyPart.getName().equals("FACE")
+                        && bodyPart.getEquipmentDetections().isEmpty())
+                .count();
     }
     
     @GetMapping (value = "testmetrics")
