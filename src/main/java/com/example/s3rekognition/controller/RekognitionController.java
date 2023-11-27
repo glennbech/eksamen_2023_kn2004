@@ -75,16 +75,15 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                                     .withName(image.getKey())))
                     .withSummarizationAttributes(new ProtectiveEquipmentSummarizationAttributes()
                             .withMinConfidence(80f)
-                            .withRequiredEquipmentTypes("FACE_COVER"));
+                            .withRequiredEquipmentTypes("FACE_COVER", "HEAD_COVER"));
 
             DetectProtectiveEquipmentResult result = rekognitionClient.detectProtectiveEquipment(request);
 
-            // If any person on an image lacks PPE on the face, it's a violation of regulations
-            int faceViolations = faceViolations(result);
             
             boolean violation = false;
             
-            
+            // If any person on an image lacks PPE on the face, it's a violation of regulations
+            int faceViolations = faceViolations(result);
             if(0 < faceViolations) {
                 violation = true;
                 
@@ -95,6 +94,17 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                 totalViolationsCounter.increment((double) faceViolations);
                 
             }
+            
+            int headViolations = headViolations(result);
+            if(0 < headViolations){
+                violation = true;
+                
+                Counter headViolationCounter = meterRegistry.counter("head_violations");
+                headViolationCounter.increment((double) headViolations);
+                
+                Counter totalViolationsCounter = meterRegistry.counter("total_violations");
+                totalViolationsCounter.increment((double) headViolations);
+            }
 
             logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total facial violations " + faceViolations);
             // Categorize the current image as a violation or not.
@@ -102,7 +112,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
            
            if(0 < personCount){
                 Counter counter = meterRegistry.counter("people_scanned");
-                for (int i = 0; i < personCount; i++) counter.increment();
+                counter.increment((double) personCount);
            } 
             
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations);
@@ -122,10 +132,18 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
      * @param result
      * @return
      */
-    private int faceViolations(DetectProtectiveEquipmentResult result) {
+    private static int faceViolations(DetectProtectiveEquipmentResult result) {
         return (int) result.getPersons().stream()
                 .flatMap(p -> p.getBodyParts().stream())
                 .filter(bodyPart -> bodyPart.getName().equals("FACE")
+                        && bodyPart.getEquipmentDetections().isEmpty())
+                .count();
+    }
+    
+    private static int headViolations(DetectProtectiveEquipmentResult result) {
+        return (int) result.getPersons().stream()
+                .flatMap(p -> p.getBodyParts().stream())
+                .filter(bodyPart -> bodyPart.getName().equals("HEAD")
                         && bodyPart.getEquipmentDetections().isEmpty())
                 .count();
     }
