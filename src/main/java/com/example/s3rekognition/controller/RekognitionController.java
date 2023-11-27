@@ -119,8 +119,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             classificationResponses.add(classification);
             
             // I have the counter here so that if for some reason an image crashes the program the ones earlier are still added to the counter.
-            Counter imagesScannedCounter = meterRegistry.counter("images_scanned");
-            imagesScannedCounter.increment();
+            meterRegistry.counter("images_scanned").increment();
         }
         
         PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
