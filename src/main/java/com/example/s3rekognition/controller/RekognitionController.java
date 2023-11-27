@@ -66,8 +66,11 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
         // Iterate over each object and scan for PPE
         for (S3ObjectSummary image : images) {
             logger.info("scanning " + image.getKey());
+            
+            // start timer so that we can see how long it took to scan this image
+            Timer.Sample timer = Timer.start(meterRegistry);
 
-            // This is where the magic happens, use AWS rekognition to detect PPE
+            // This is where the magic happens, use AWS rekognition to detect PPE for this image
             DetectProtectiveEquipmentRequest request = new DetectProtectiveEquipmentRequest()
                     .withImage(new Image()
                             .withS3Object(new S3Object()
@@ -85,38 +88,29 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
 
             boolean violation = false;
             
+            // No point checking if there are any violations if people detected is 0
            if(0 < personCount){
-            
-                // If any person on an image lacks PPE on the face, it's a violation of regulations
+                // If any person on an image lacks PPE on the face or head, it's a violation of regulations
                 faceViolations = faceViolations(result);
-                if(0 < faceViolations) {
-                    violation = true;
-                    
-                    meterRegistry.counter("facial_violations").increment((double) faceViolations);
-                    meterRegistry.counter("total_violations").increment((double) faceViolations);
-                    
-                }
-                
                 headViolations = headViolations(result);
-                if(0 < headViolations){
+                if(0 < faceViolations || 0 < headViolations) {
                     violation = true;
-                
-                    meterRegistry.counter("head_violations").increment((double) headViolations);
-                    meterRegistry.counter("total_violations").increment((double) headViolations);
                 }
-    
-                logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total violations " + (faceViolations + headViolations) + ", facial violations " + faceViolations + ", head violations " + headViolations);
-                // Categorize the current image as a violation or not.
-           
-                meterRegistry.counter("people_scanned").increment((double) personCount);
            } 
-           else{
-               logger.info("no people in image.");
-           }
+           
+            logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total violations " + (faceViolations + headViolations) + ", facial violations " + faceViolations + ", head violations " + headViolations);
             
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations, headViolations);
             
             classificationResponses.add(classification);
+            
+            // Stop and uploat timer
+            timer.stop(meterRegistry.timer("ppe_image_scan_time"));
+            
+            meterRegistry.counter("people_scanned").increment((double) personCount);
+            meterRegistry.counter("head_violations").increment((double) headViolations);
+            meterRegistry.counter("facial_violations").increment((double) faceViolations);
+            meterRegistry.counter("total_violations").increment((double) faceViolations + headViolations);
             
             // I have the counter here so that if for some reason an image crashes the program the ones earlier are still added to the counter.
             meterRegistry.counter("images_scanned").increment();
