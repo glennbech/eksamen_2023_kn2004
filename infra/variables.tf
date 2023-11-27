@@ -17,3 +17,8 @@ variable "dashboard_name"{
     description = "Dashboard name."
     default = "kn2004-rekognition-dashboard"
 }
+
+variable "metrics_region"{
+    description = "Metrics region."
+    default = "eu-west-1"
+}

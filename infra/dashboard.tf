@@ -12,11 +12,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "people_scanned.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 3600,
                 "title": "Hourly people scanned"
@@ -30,13 +30,13 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "total_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "facial_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "head_violations.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "total_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 3600,
                 "title": "Hourly violations"
@@ -50,11 +50,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "facial_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "head_violations.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "view": "pie",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 3600,
                 "title": "Hourly violation type pie chart"
@@ -71,11 +71,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "people_scanned.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 86400,
                 "title": "Daily people scanned"
@@ -89,13 +89,13 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "total_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "facial_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "head_violations.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "total_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 86400,
                 "title": "Daily violations"
@@ -109,11 +109,11 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "kn2004", "facial_violations.count", { "region": "eu-west-1" } ],
-                    [ ".", "head_violations.count", { "region": "eu-west-1" } ]
+                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "view": "pie",
-                "region": "eu-west-1",
+                "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 86400,
                 "title": "Daily violation type pie chart"
