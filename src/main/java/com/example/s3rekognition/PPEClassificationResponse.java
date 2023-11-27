@@ -8,12 +8,14 @@ public class PPEClassificationResponse  implements Serializable  {
     private boolean violation;
     private int personCount;
     private int faceViolations;
+    private int headViolations;
 
-    public PPEClassificationResponse(String fileName, int personCount, boolean violation, int faceViolations) {
+    public PPEClassificationResponse(String fileName, int personCount, boolean violation, int faceViolations, int headViolations) {
         this.fileName = fileName;
         this.personCount = personCount;
         this.violation = violation;
         this.faceViolations = faceViolations;
+        this.headViolations = headViolations;
     }
 
     public String getFileName() {
@@ -46,5 +48,13 @@ public class PPEClassificationResponse  implements Serializable  {
 
     public void setFaceViolations(int faceViolations) {
         this.faceViolations = faceViolations;
+    }
+    
+    public int getHeadViolations() {
+        return headViolations;
+    }
+
+    public void setHeadViolations(int headViolations) {
+        this.headViolations = headViolations;
     }
 }

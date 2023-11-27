@@ -78,42 +78,41 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                             .withRequiredEquipmentTypes("FACE_COVER", "HEAD_COVER"));
 
             DetectProtectiveEquipmentResult result = rekognitionClient.detectProtectiveEquipment(request);
-
             
+            int personCount = result.getPersons().size();
+            int faceViolations = 0;
+            int headViolations = 0;
+
             boolean violation = false;
             
-            // If any person on an image lacks PPE on the face, it's a violation of regulations
-            int faceViolations = faceViolations(result);
-            if(0 < faceViolations) {
-                violation = true;
-                
-                Counter faceViolationsCounter = meterRegistry.counter("facial_violations");
-                faceViolationsCounter.increment((double) faceViolations);
-                
-                Counter totalViolationsCounter = meterRegistry.counter("total_violations");
-                totalViolationsCounter.increment((double) faceViolations);
-                
-            }
-            
-            int headViolations = headViolations(result);
-            if(0 < headViolations){
-                violation = true;
-                
-                Counter headViolationCounter = meterRegistry.counter("head_violations");
-                headViolationCounter.increment((double) headViolations);
-                
-                Counter totalViolationsCounter = meterRegistry.counter("total_violations");
-                totalViolationsCounter.increment((double) headViolations);
-            }
-
-            logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total violations " + (faceViolations + headViolations) + ", facial violations " + faceViolations + ", head violations " + headViolations);
-            // Categorize the current image as a violation or not.
-            int personCount = result.getPersons().size();
-           
            if(0 < personCount){
-                Counter counter = meterRegistry.counter("people_scanned");
-                counter.increment((double) personCount);
+            
+                // If any person on an image lacks PPE on the face, it's a violation of regulations
+                faceViolations = faceViolations(result);
+                if(0 < faceViolations) {
+                    violation = true;
+                    
+                    meterRegistry.counter("facial_violations").increment((double) faceViolations);
+                    meterRegistry.counter("total_violations").increment((double) faceViolations);
+                    
+                }
+                
+                headViolations = headViolations(result);
+                if(0 < headViolations){
+                    violation = true;
+                
+                    meterRegistry.counter("head_violations").increment((double) headViolations);
+                    meterRegistry.counter("total_violations").increment((double) headViolations);
+                }
+    
+                logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total violations " + (faceViolations + headViolations) + ", facial violations " + faceViolations + ", head violations " + headViolations);
+                // Categorize the current image as a violation or not.
+           
+                meterRegistry.counter("people_scanned").increment((double) personCount);
            } 
+           else{
+               logger.info("no people in image.");
+           }
             
             PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations, headViolations);
             
@@ -123,8 +122,8 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
             Counter imagesScannedCounter = meterRegistry.counter("images_scanned");
             imagesScannedCounter.increment();
         }
-        PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
         
+        PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
         
         return ResponseEntity.ok(ppeResponse);
     }
@@ -142,6 +141,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
         return (int) result.getPersons().stream()
                 .flatMap(p -> p.getBodyParts().stream())
                 .filter(bodyPart -> bodyPart.getName().equals("FACE")
+                        // Not certain how this reacts to other things besides masks, such as sun-glasses etc. ?
                         && bodyPart.getEquipmentDetections().isEmpty())
                 .count();
     }
@@ -150,11 +150,14 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
         return (int) result.getPersons().stream()
                 .flatMap(p -> p.getBodyParts().stream())
                 .filter(bodyPart -> bodyPart.getName().equals("HEAD")
+                        // Potential limitations: haven't done too much testing, so I think it potentially might consider things like hats and hoods enough to not get a violation
                         && bodyPart.getEquipmentDetections().isEmpty())
                 .count();
     }
     
-    @GetMapping (value = "testmetrics")
+    
+    
+    @GetMapping (value = "/testmetrics")
     public ResponseEntity<String> testMetrics (){
         Counter counter = meterRegistry.counter("test.counter");
         counter.increment();
