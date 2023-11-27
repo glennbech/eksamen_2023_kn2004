@@ -106,7 +106,7 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                 totalViolationsCounter.increment((double) headViolations);
             }
 
-            logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total facial violations " + faceViolations);
+            logger.info("scanning " + image.getKey() + ", violation result " + violation + ", total violations " + (faceViolations + headViolations) + ", facial violations " + faceViolations + ", head violations " + headViolations);
             // Categorize the current image as a violation or not.
             int personCount = result.getPersons().size();
            
@@ -115,11 +115,17 @@ public class RekognitionController implements ApplicationListener<ApplicationRea
                 counter.increment((double) personCount);
            } 
             
-            PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations);
+            PPEClassificationResponse classification = new PPEClassificationResponse(image.getKey(), personCount, violation, faceViolations, headViolations);
             
             classificationResponses.add(classification);
+            
+            // I have the counter here so that if for some reason an image crashes the program the ones earlier are still added to the counter.
+            Counter imagesScannedCounter = meterRegistry.counter("images_scanned");
+            imagesScannedCounter.increment();
         }
         PPEResponse ppeResponse = new PPEResponse(bucketName, classificationResponses);
+        
+        
         return ResponseEntity.ok(ppeResponse);
     }
 
