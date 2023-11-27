@@ -22,3 +22,13 @@ variable "metrics_region"{
     description = "Metrics region."
     default = "eu-west-1"
 }
+
+variable "facial_violations_color"{
+    description = "The color of the facial violations graphs."
+    default = "#ff7f0e"
+}
+
+variable "head_violations_color"{
+    description = "The color of the head violations graphs."
+    default = "#d62728"
+}

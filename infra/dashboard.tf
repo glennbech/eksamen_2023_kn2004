@@ -32,8 +32,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "properties": {
                 "metrics": [
                     [ "${var.cloudwatch_namespace}", "total_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
+                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}", "color": "${var.facial_violations_color}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}", "color": "${var.head_violations_color}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
@@ -51,8 +51,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
+                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}", "color": "${var.facial_violations_color}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}", "color": "${var.head_violations_color}" } ]
                 ],
                 "view": "pie",
                 "region": "${var.metrics_region}",
@@ -93,8 +93,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "properties": {
                 "metrics": [
                     [ "${var.cloudwatch_namespace}", "total_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
+                    [ ".", "facial_violations.count", { "region": "${var.metrics_region}", "color": "${var.facial_violations_color}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}", "color": "${var.head_violations_color}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
@@ -112,8 +112,8 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}" } ],
-                    [ ".", "head_violations.count", { "region": "${var.metrics_region}" } ]
+                    [ "${var.cloudwatch_namespace}", "facial_violations.count", { "region": "${var.metrics_region}", "color": "${var.facial_violations_color}" } ],
+                    [ ".", "head_violations.count", { "region": "${var.metrics_region}", "color": "${var.head_violations_color}" } ]
                 ],
                 "view": "pie",
                 "region": "${var.metrics_region}",
