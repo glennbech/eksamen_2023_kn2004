@@ -12,14 +12,15 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ]
+                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "images_scanned.count", { "region": "${var.metrics_region}" } ]
                 ],
                 "sparkline": true,
                 "view": "singleValue",
                 "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 3600,
-                "title": "Hourly people scanned"
+                "title": "Hourly people and scanned"
             }
         },
         {
@@ -71,14 +72,16 @@ resource "aws_cloudwatch_dashboard" "main" {
             "height": 6,
             "properties": {
                 "metrics": [
-                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ]
+                    [ "${var.cloudwatch_namespace}", "people_scanned.count", { "region": "${var.metrics_region}" } ],
+                    [ ".", "images_scanned.count", { "region": "${var.metrics_region}" } ]
+
                 ],
                 "sparkline": true,
                 "view": "singleValue",
                 "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 86400,
-                "title": "Daily people scanned"
+                "title": "Daily people and images scanned"
             }
         },
         {
