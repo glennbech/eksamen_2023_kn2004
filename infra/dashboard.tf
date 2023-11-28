@@ -162,6 +162,20 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "period": 86400,
                 "title": "Daily violation type pie chart"
             }
+        },
+        
+        {
+            "type": "alarm",
+            "x": 18,
+            "y": 6,
+            "width": 6,
+            "height": 2,
+            "properties": {
+                "title": "ALARM: not enough head ppe",
+                "alarms": [
+                    "arn:aws:cloudwatch:eu-west-1:244530008913:alarm:kn2004-not-enough-head-ppe"
+                ]
+            }
         }
     ]
 }
