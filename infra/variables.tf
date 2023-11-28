@@ -32,3 +32,8 @@ variable "head_violations_color"{
     description = "The color of the head violations graphs."
     default = "#d62728"
 }
+
+variable "alarm_email"{
+    description = "Alarm email"
+    default = "candidate2004@proton.me" // only used for testing, password is: DevOpsLife!
+}

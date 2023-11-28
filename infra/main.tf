@@ -88,3 +88,9 @@ resource "aws_iam_role_policy_attachment" "attachment" {
   policy_arn = aws_iam_policy.policy.arn
 }
 
+module "alarm" {
+  source = "./alarm_module"
+  alarm_email = var.alarm_email
+  prefix = var.prefix
+  cloudwatch_namespace = var.cloudwatch_namespace
+}
