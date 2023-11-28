@@ -20,7 +20,7 @@ resource "aws_cloudwatch_dashboard" "main" {
                 "region": "${var.metrics_region}",
                 "stat": "Sum",
                 "period": 3600,
-                "title": "Hourly people and scanned"
+                "title": "Hourly people and images scanned"
             }
         },
         {
